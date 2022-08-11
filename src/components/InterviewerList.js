@@ -7,14 +7,14 @@ import "./InterviewerList.scss";
 // props.interviewer  -- currently selected interviewer
 
 export default function InterviewerList(props) {
-  let toReturn = props.interviewers.map((item) => {
+  let toReturn = props.interviewers.map((interviewer) => {
     return (
       <InterviewerListItem
-        key={item.id}
-        name={item.name}
-        avatar={item.avatar}
-        selected={item.id === props.interviewer}
-        setInterviewer={(event) => props.setInterviewer(item.id)}
+        key={interviewer.id}
+        name={interviewer.name}
+        avatar={interviewer.avatar}
+        selected={interviewer.id === props.value}
+        setInterviewer={() => props.onChange(interviewer.id)}
       />
     );
   });
