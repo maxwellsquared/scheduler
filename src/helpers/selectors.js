@@ -13,6 +13,15 @@ export function getAppointmentsForDay(state, day) {
   appointmentIDs.forEach((element) => {
     toReturn.push(state.appointments[element]);
   });
+  return toReturn;
+}
+
+export function getInterview(state, interview) {
+  let toReturn = {};
+
+  if (!interview) return null;
+
+  toReturn.student = interview.student;
 
   return toReturn;
 }
