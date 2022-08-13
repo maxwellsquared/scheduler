@@ -16,12 +16,27 @@ export function getAppointmentsForDay(state, day) {
   return toReturn;
 }
 
+// takes
+// { student: "Archie Cohen", interviewer: 2 }
+
+// to return:
+// {
+//   "student": "Archie Cohen", // DONE
+//   "interviewer": {   // state.interviewers[interview.interviewer]
+//     "id": 1,     //
+//     "name": "Sylvia Palmer",    //
+//     "avatar": "https://i.imgur.com/LpaY82x.png"
+//   }
+// }
 export function getInterview(state, interview) {
   let toReturn = {};
 
   if (!interview) return null;
 
+  // put the student into the object
   toReturn.student = interview.student;
+  toReturn.interviewer = { ...state.interviewers[interview.interviewer] };
 
+  console.log("ME RETURNY", toReturn);
   return toReturn;
 }
