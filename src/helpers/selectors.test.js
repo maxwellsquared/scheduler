@@ -1,4 +1,8 @@
-import { getAppointmentsForDay, getInterview } from "./selectors";
+import {
+  getAppointmentsForDay,
+  getInterview,
+  getInterviewersForDay,
+} from "./selectors";
 
 const state = {
   days: [
@@ -6,11 +10,13 @@ const state = {
       id: 1,
       name: "Monday",
       appointments: [1, 2, 3],
+      interviewers: [1, 2],
     },
     {
       id: 2,
       name: "Tuesday",
       appointments: [4, 5],
+      interviewers: [2, 3],
     },
   ],
   appointments: {
@@ -39,6 +45,11 @@ const state = {
       name: "Tori Malcolm",
       avatar: "https://i.imgur.com/Nmx0Qxo.png",
     },
+    3: {
+      id: 3,
+      name: "Glork Jorbensen",
+      avatar: "https://i.imgur.com/Nmx0Qxo.png",
+    },
   },
 };
 
@@ -65,6 +76,32 @@ test("getAppointmentsForDay returns an empty array when the days data is empty",
 
 test("getAppointmentsForDay returns an empty array when the day is not found", () => {
   const result = getAppointmentsForDay(state, "Wednesday");
+  expect(result.length).toEqual(0);
+});
+
+test("getInterviewersForDay returns an array", () => {
+  const result = getInterviewersForDay(state, "Monday");
+  expect(Array.isArray(result)).toBe(true);
+});
+
+test("getInterviewersForDay returns an array with a length matching the number of interviewers for that day", () => {
+  const result = getInterviewersForDay(state, "Monday");
+  expect(result.length).toEqual(2);
+});
+
+test("getInterviewersForDay returns an array containing the correct interviewer objects", () => {
+  const [first, second] = getInterviewersForDay(state, "Tuesday");
+  expect(first).toEqual(state.interviewers["2"]);
+  expect(second).toEqual(state.interviewers["3"]);
+});
+
+test("getInterviewersForDay returns an empty array when the days data is empty", () => {
+  const result = getInterviewersForDay({ days: [] }, "Monday");
+  expect(result.length).toEqual(0);
+});
+
+test("getInterviewersForDay returns an empty array when the day is not found", () => {
+  const result = getInterviewersForDay(state, "Wednesday");
   expect(result.length).toEqual(0);
 });
 

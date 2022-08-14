@@ -30,3 +30,21 @@ export function getInterview(state, interview) {
 
   return toReturn;
 }
+
+export function getInterviewersForDay(state, day) {
+  let toReturn = [];
+
+  // find index of the object in state.days with .name property === day argument
+  let dayIndex = state.days.findIndex((element) => element.name === day);
+  // if it's not found, return empty array
+  if (dayIndex === -1) return toReturn;
+
+  // set the interviewer IDs for this day
+  let interviewerIDs = state.days[dayIndex].interviewers;
+
+  // put the appointments with corresponding IDs into our array
+  interviewerIDs.forEach((element) => {
+    toReturn.push(state.interviewers[element]);
+  });
+  return toReturn;
+}
