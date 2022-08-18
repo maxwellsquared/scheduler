@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 
@@ -12,29 +12,44 @@ export default function useApplicationData(initialState) {
 
   const setDay = (day) => setState({ ...state, day });
 
-  const getSpots = function (day) {
-    let numSpots = 0;
-    day.appointments.forEach(apptID => {
-      if (state.appointments[apptID].interview === null) {
-        numSpots++;
-      }
-    });
-    return numSpots;
-  }
+  //===== getSpots function -  for testing original emptySpots method====
+  // const getSpots = function (day) {
+  //   let numSpots = 0;
+  //   day.appointments.forEach(apptID => {
+  //     if (state.appointments[apptID].interview === null) {
+  //       numSpots++;
+  //     }
+  //   });
+  //   console.log("numSpots", numSpots)
+  //   return numSpots;
+  // }
+
 
   const updateSpots = function (id, state, isCreating = false) {
     const currentDay = state.days.find((day) => day.appointments.includes(id));
-    let emptySpots = getSpots(currentDay);
-    if (isCreating) { emptySpots--; }
-    console.log("IT NOW IS", currentDay)
-    console.log("EMPTY SPOTS", emptySpots);
-    return [currentDay, emptySpots];
+
+    const emptySpots = currentDay.appointments.filter(
+      (id) => !state.appointments[id].interview
+    ).length;
+    // Below was my original function -- why did the above work when getSpots didn't?
+    // let emptySpots = getSpots(currentDay);
+    //=========================================
+    // i THINK it's because the interview with the current ID is being filtered out
+    // in comparison, we are counting the number of nulls that exist RIGHT NOW
+    //=========================================
+    const newDay = { ...currentDay, spots: emptySpots };
+    const newDays = state.days.map((day) => {
+      if (day.name === state.day) {
+        return newDay;
+      }
+      return day;
+    })
+    setState({ ...state, days: newDays });
+    return newDays;
   }
 
   // ==== BOOK INTERVIEW ====
-  const bookInterview = (id, interview, isCreating) => {
-    const [currentDay, emptySpots] = updateSpots(id, state, isCreating);
-
+  const bookInterview = (id, interview) => {
     const appointment = {
       ...state.appointments[id],
       interview,
@@ -45,18 +60,12 @@ export default function useApplicationData(initialState) {
       [id]: appointment,
     };
 
-    const day = {
-      ...currentDay,
-      spots: emptySpots
-    }
-
-    const newDays = [...state.days]
-    newDays[currentDay.id - 1] = day;
+    const newState = { ...state, appointments }
 
     return axios
       .put(`/api/appointments/${id}`, { interview: interview })
       .then(() => {
-        setState({ ...state, appointments });
+        updateSpots(id, newState);
       })
   };
 
@@ -70,17 +79,11 @@ export default function useApplicationData(initialState) {
       interview: null,
     };
     const appointments = { ...state.appointments, [id]: ourAppointment };
-
-    const day = {
-      ...currentDay,
-      spots: emptySpots
-    }
-    const newDays = [...state.days]
-    newDays[currentDay.id - 1] = day;
+    const newState = { ...state, appointments }
 
     return axios.delete(`/api/appointments/${id}`)
       .then(() => {
-        setState({ ...state, appointments, days: newDays });
+        updateSpots(id, newState);
       });
   };
 
