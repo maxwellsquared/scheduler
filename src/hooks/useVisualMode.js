@@ -1,49 +1,33 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-// Heavily reliant on @cwarcup's work in a number of areas.
+// Thanks to @cwarcup for extensive help and suggestions!
 
-export function useVisualMode(initial) {
-  const [mode, setMode] = useState(initial);
+export default function useVisualMode(initial) {
   const [history, setHistory] = useState([initial]);
 
   const transition = function (newMode, replace = false) {
-    if (replace) {
-      setMode(newMode);
-      let replacementHistory = [...history];
-      replacementHistory.pop();
-      replacementHistory.push(newMode);
-      setHistory(replacementHistory);
-    } else {
-      setMode(newMode);
-      setHistory([...history, newMode]);
-    }
+    setHistory((prev) => {
+      let newHistory = [...prev];
+
+      if (replace) {
+        newHistory.pop();
+      }
+      newHistory.push(newMode);
+      return newHistory;
+    })
+
   };
 
   const back = function () {
     if (history.length <= 1) {
-      setMode(initial);
-      setHistory([initial]);
-    } else {
-      let newHistory = [...history]; // copies history to new "dead" array
-      newHistory.pop(); // removes most recent entry in copied history
-      // Need to pull history state into a variable so I can mess with it!
-      setHistory(newHistory);
-      setMode(newHistory[newHistory.length - 1]);
+      return;
     }
+
+    let newHistory = [...history]; // copies history to new "dead" array
+    newHistory.pop(); // removes most recent entry in copied history
+    setHistory(newHistory);
   };
 
+  const mode = history[history.length - 1];
   return { mode, transition, back };
 }
-
-// WHY DIDN'T THIS WORK?!!?
-
-// const back = function () {
-//   if (history.length <= 1) {
-//     setMode(initial);
-//   } else {
-//     let lastMode = history[history.length - 1];
-//     console.log("lastMode is", lastMode);
-//     setMode(lastMode);
-//     console.log("Mode is now", mode);
-//   }
-// };

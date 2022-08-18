@@ -25,8 +25,6 @@ export function getInterview(state, interview) {
   toReturn.student = interview.student;
   // puts the interviewer into the object
   toReturn.interviewer = { ...state.interviewers[interview.interviewer] };
-  let a = 1;
-  a++;
 
   return toReturn;
 }
