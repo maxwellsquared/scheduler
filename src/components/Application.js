@@ -1,12 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import DayList from "./DayList";
 import "components/Application.scss";
 import Appointment from "components/Appointment";
-import {
-  getAppointmentsForDay,
-  getInterview,
-  getInterviewersForDay,
-} from "helpers/selectors";
+import { getAppointmentsForDay, getInterview, getInterviewersForDay, } from "helpers/selectors";
 import useApplicationData from "hooks/useApplicationData";
 
 export default function Application(props) {
@@ -16,13 +12,6 @@ export default function Application(props) {
     bookInterview,
     cancelInterview
   } = useApplicationData();
-
-  useEffect(() => {
-    setTimeout(() => {
-
-      console.log("STATE AFTER EVERYTHING", state)
-    }, 3000);
-  })
 
   const interviewers = getInterviewersForDay(state, state.day);
 
